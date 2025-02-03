@@ -4,10 +4,10 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/rs/zerolog/log"
 	"github.com/sparkymat/echogen/internal/project"
 	"github.com/spf13/cobra"
 )
@@ -20,20 +20,20 @@ var initCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		name, err := cmd.Flags().GetString("name")
 		if err != nil {
-			panic(err)
+			log.Fatal().Err(err).Msg("failed to read name")
 		}
 
 		forceFlag, err := cmd.Flags().GetBool("force")
 		if err != nil {
-			panic(err)
+			log.Fatal().Err(err).Msg("failed to read force flag")
 		}
 
-		fmt.Printf("initializing project with name=%s\n", name)
+		log.Info().Str("name", name).Msg("initializing project")
 
 		p := project.New(name)
 
 		if err := p.Init(cmd.Context(), forceFlag); err != nil {
-			panic(err)
+			log.Fatal().Msg("failed to initialize project")
 		}
 	},
 }
@@ -43,7 +43,7 @@ func init() {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		log.Fatal().Err(err).Msg("failed to read cwd")
 	}
 
 	folderName := filepath.Base(wd)

@@ -2,20 +2,24 @@ package project
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"os"
+
+	"github.com/rs/zerolog/log"
 )
+
+var ErrDirectoryNotEmpty = errors.New("directory is not empty")
 
 func (p *Project) Init(ctx context.Context, forceCreate bool) error {
 	entries, err := os.ReadDir(".")
 	if err != nil {
-		fmt.Println("Error reading directory")
-		panic(err)
+		log.Error().Err(err).Msg("failed to read directory")
+		return err
 	}
 
 	if len(entries) > 0 && !forceCreate {
-		fmt.Println("Directory is not empty")
-		panic(err)
+		log.Error().Err(ErrDirectoryNotEmpty).Msg("directory is not empty")
+		return ErrDirectoryNotEmpty
 	}
 
 	return nil
