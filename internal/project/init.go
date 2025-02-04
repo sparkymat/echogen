@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sparkymat/echogen/internal/project/templates"
@@ -12,8 +13,15 @@ import (
 
 var ErrDirectoryNotEmpty = errors.New("directory is not empty")
 
-func (p *Project) Init(ctx context.Context, forceCreate bool) error {
-	entries, err := os.ReadDir(".")
+func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error {
+	if _, err := os.Stat(path); err != nil && errors.Is(err, os.ErrNotExist) && forceCreate {
+		if err = os.MkdirAll(path, 0755); err != nil {
+			log.Error().Err(err).Msg("failed to create directory")
+			return err
+		}
+	}
+
+	entries, err := os.ReadDir(path)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to read directory")
 		return err
@@ -25,7 +33,7 @@ func (p *Project) Init(ctx context.Context, forceCreate bool) error {
 	}
 
 	// Create main.go
-	fp, err := os.Create("main.go")
+	fp, err := os.Create(filepath.Join(path, "main.go"))
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create main.go")
 		return err
