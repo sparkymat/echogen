@@ -3,7 +3,8 @@ package project
 import (
 	"context"
 	"errors"
-	"io"
+	"fmt"
+	"html/template"
 	"os"
 	"path/filepath"
 
@@ -32,20 +33,57 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return ErrDirectoryNotEmpty
 	}
 
-	// Create main.go
-	fp, err := os.Create(filepath.Join(path, "main.go"))
-	if err != nil {
-		log.Error().Err(err).Msg("failed to create main.go")
-		return err
+	values := map[string]string{
+		"Project":    p.Name,
+		"ProjectURL": p.URL + "/" + p.Name,
 	}
-	defer fp.Close()
 
-	if _, err = io.WriteString(fp, templates.MainGo); err != nil {
+	// Create main.go
+	if err := p.renderTemplateToFile(
+		"maingo",
+		templates.MainGo,
+		filepath.Join(path, "main.go"),
+		values,
+	); err != nil {
 		log.Error().Err(err).Msg("failed to write to main.go")
 		return err
 	}
+	log.Info().
+		Str("name", "main.go").
+		Msg("generated file")
 
 	// Create go.mod
+	if err := p.renderTemplateToFile(
+		"gomod",
+		templates.GoMod,
+		filepath.Join(path, "go.mod"),
+		values,
+	); err != nil {
+		log.Error().Err(err).Msg("failed to render go.mod")
+		return err
+	}
+	log.Info().
+		Str("name", "go.mod").
+		Msg("generated file")
+
+	return nil
+}
+
+func (p *Project) renderTemplateToFile(templateName string, templateString string, path string, values map[string]string) error {
+	tmpl, err := template.New(templateName).Parse(templateString)
+	if err != nil {
+		return fmt.Errorf("failed to parse template: %w", err)
+	}
+
+	fp, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer fp.Close()
+
+	if err = tmpl.Execute(fp, values); err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
+	}
 
 	return nil
 }

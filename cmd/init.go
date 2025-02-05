@@ -28,6 +28,11 @@ var initCmd = &cobra.Command{
 			log.Fatal().Err(err).Msg("failed to read path")
 		}
 
+		projectURL, err := cmd.Flags().GetString("url")
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to read project url")
+		}
+
 		forceFlag, err := cmd.Flags().GetBool("force")
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to read force flag")
@@ -35,7 +40,7 @@ var initCmd = &cobra.Command{
 
 		log.Info().Str("name", name).Msg("initializing project")
 
-		p := project.New(name)
+		p := project.New(name, projectURL)
 
 		if err := p.Init(cmd.Context(), path, forceFlag); err != nil {
 			log.Fatal().Msg("failed to initialize project")
@@ -56,4 +61,5 @@ func init() {
 	initCmd.Flags().BoolP("force", "f", false, "Force initialize even if the directory is not empty")
 	initCmd.Flags().StringP("name", "n", folderName, "Name of the project")
 	initCmd.Flags().StringP("path", "p", wd, "Path to the project")
+	initCmd.Flags().StringP("url", "u", "example.com", "Parent url for the project")
 }
