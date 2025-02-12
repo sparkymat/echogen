@@ -74,13 +74,49 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
-	// Create internal/config/service.go
+	// Create internal/database/service.go
 	if err := p.renderTemplateToFile(
 		"gomod",
-		templates.ConfigServiceGo,
+		templates.DatabaseServiceGo,
 		path,
 		filepath.Join("internal", "database"),
 		"service.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/route/setup.go
+	if err := p.renderTemplateToFile(
+		"gomod",
+		templates.RouteSetupGo,
+		path,
+		filepath.Join("internal", "route"),
+		"setup.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/config/service.go
+	if err := p.renderTemplateToFile(
+		"gomod",
+		templates.RouteWebGo,
+		path,
+		filepath.Join("internal", "route"),
+		"web.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/config/service.go
+	if err := p.renderTemplateToFile(
+		"gomod",
+		templates.RouteAPIGo,
+		path,
+		filepath.Join("internal", "route"),
+		"api.go",
 		values,
 	); err != nil {
 		return err
