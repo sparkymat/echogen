@@ -42,48 +42,91 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 	if err := p.renderTemplateToFile(
 		"maingo",
 		templates.MainGo,
-		filepath.Join(path, "main.go"),
+		path,
+		"",
+		"main.go",
 		values,
 	); err != nil {
-		log.Error().Err(err).Msg("failed to write to main.go")
 		return err
 	}
-	log.Info().
-		Str("name", "main.go").
-		Msg("generated file")
 
 	// Create go.mod
 	if err := p.renderTemplateToFile(
 		"gomod",
 		templates.GoMod,
-		filepath.Join(path, "go.mod"),
+		path,
+		"",
+		"go.mod",
 		values,
 	); err != nil {
-		log.Error().Err(err).Msg("failed to render go.mod")
 		return err
 	}
-	log.Info().
-		Str("name", "go.mod").
-		Msg("generated file")
+
+	// Create internal/config/service.go
+	if err := p.renderTemplateToFile(
+		"gomod",
+		templates.ConfigServiceGo,
+		path,
+		filepath.Join("internal", "config"),
+		"service.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/config/service.go
+	if err := p.renderTemplateToFile(
+		"gomod",
+		templates.ConfigServiceGo,
+		path,
+		filepath.Join("internal", "database"),
+		"service.go",
+		values,
+	); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func (p *Project) renderTemplateToFile(templateName string, templateString string, path string, values map[string]string) error {
+func (p *Project) renderTemplateToFile(
+	templateName string,
+	templateString string,
+	path string,
+	folder string,
+	filename string,
+	values map[string]string,
+) error {
+	fullFolderPath := filepath.Join(path, folder)
+	fullFilePath := filepath.Join(fullFolderPath, filename)
+	filePath := filepath.Join(folder, filename)
+
+	if err := os.MkdirAll(fullFolderPath, 0755); err != nil {
+		log.Error().Err(err).Msgf("failed to render %s", filePath)
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
 	tmpl, err := template.New(templateName).Parse(templateString)
 	if err != nil {
+		log.Error().Err(err).Msgf("failed to render %s", filePath)
 		return fmt.Errorf("failed to parse template: %w", err)
 	}
 
-	fp, err := os.Create(path)
+	fp, err := os.Create(fullFilePath)
 	if err != nil {
+		log.Error().Err(err).Msgf("failed to render %s", filePath)
 		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer fp.Close()
 
 	if err = tmpl.Execute(fp, values); err != nil {
+		log.Error().Err(err).Msgf("failed to render %s", filePath)
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
+
+	log.Info().
+		Str("name", filePath).
+		Msg("generated file")
 
 	return nil
 }

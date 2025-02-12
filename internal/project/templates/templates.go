@@ -8,4 +8,7 @@ var (
 
 	//go:embed go.mod.tmpl
 	GoMod string
+
+	//go:embed internal_config_service.go.tmpl
+	ConfigServiceGo string
 )
