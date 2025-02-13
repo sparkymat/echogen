@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sparkymat/echogen/internal/project/templates"
@@ -36,6 +37,19 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 	values := map[string]string{
 		"Project":    p.Name,
 		"ProjectURL": p.URL + "/" + p.Name,
+		"Timestamp":  time.Now().Format("20060102150405"),
+	}
+
+	// Create Makefile
+	if err := p.renderTemplateToFile(
+		"makefile",
+		templates.Makefile,
+		path,
+		"",
+		"Makefile",
+		values,
+	); err != nil {
+		return err
 	}
 
 	// Create main.go
@@ -57,6 +71,18 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		path,
 		"",
 		"go.mod",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create sqlc.yaml
+	if err := p.renderTemplateToFile(
+		"sqlcyaml",
+		templates.SqlcYaml,
+		path,
+		filepath.Join(""),
+		"sqlc.yaml",
 		values,
 	); err != nil {
 		return err
@@ -237,6 +263,42 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		path,
 		filepath.Join("internal"),
 		"user_service.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create migrations/timestamp_create_users_table.up.sql
+	if err := p.renderTemplateToFile(
+		"createuserstableupsql",
+		templates.CreateUsersTableUpSQL,
+		path,
+		filepath.Join("migrations"),
+		values["Timestamp"]+"_create_users_table.up.sql",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create migrations/timestamp_create_users_table.down.sql
+	if err := p.renderTemplateToFile(
+		"createuserstabledownsql",
+		templates.CreateUsersTableDownSQL,
+		path,
+		filepath.Join("migrations"),
+		values["Timestamp"]+"_create_users_table.down.sql",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/database/queries.sql
+	if err := p.renderTemplateToFile(
+		"databasequeriessql",
+		templates.DatabaseQueriesSQL,
+		path,
+		filepath.Join("internal", "database"),
+		"queries.sql",
 		values,
 	); err != nil {
 		return err

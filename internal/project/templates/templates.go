@@ -9,6 +9,9 @@ var (
 	//go:embed go.mod.template
 	GoMod string
 
+	//go:embed sqlc.yaml.template
+	SqlcYaml string
+
 	//go:embed internal_config_service.go.template
 	ConfigServiceGo string
 
@@ -53,4 +56,16 @@ var (
 
 	//go:embed internal_user_service.go.template
 	UserServiceGo string
+
+	//go:embed makefile.template
+	Makefile string
+
+	//go:embed create_users_table.up.sql.template
+	CreateUsersTableUpSQL string
+
+	//go:embed create_users_table.down.sql.template
+	CreateUsersTableDownSQL string
+
+	//go:embed internal_database_queries.sql.template
+	DatabaseQueriesSQL string
 )
