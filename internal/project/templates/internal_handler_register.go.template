@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
+	"{{.ProjectURL}}/internal"
 	"{{.ProjectURL}}/internal/view"
 	"{{.ProjectURL}}/internal/config"
 )

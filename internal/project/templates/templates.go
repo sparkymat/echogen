@@ -12,6 +12,9 @@ var (
 	//go:embed sqlc.yaml.template
 	SqlcYaml string
 
+	//go:embed golangci.yml.template
+	GolangciYml string
+
 	//go:embed internal_config_service.go.template
 	ConfigServiceGo string
 

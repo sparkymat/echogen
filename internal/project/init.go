@@ -64,6 +64,18 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
+	// Create .golangci.yml
+	if err := p.renderTemplateToFile(
+		"golangciyml",
+		templates.GolangciYml,
+		path,
+		"",
+		".golangci.yml",
+		values,
+	); err != nil {
+		return err
+	}
+
 	// Create go.mod
 	if err := p.renderTemplateToFile(
 		"gomod",

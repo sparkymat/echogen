@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"{{.ProjectURL}}/internal/dbx"
-	"{{.ProjectURL}}/internal/dbx"
 )
 
 type UserService interface {

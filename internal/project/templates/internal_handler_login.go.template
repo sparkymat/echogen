@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"{{.ProjectURL}}/internal"
 	"{{.ProjectURL}}/internal/view"
 	"{{.ProjectURL}}/internal/config"
 	"github.com/labstack/echo/v4"
