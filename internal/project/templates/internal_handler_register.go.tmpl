@@ -1,0 +1,53 @@
+package handler
+
+import (
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"{{.ProjectURL}}/internal/view"
+)
+
+const (
+	minPasswordLength = 8
+	defaultBcryptCost = 10
+)
+
+func Register(cfg internal.ConfigService, _ internal.UserService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return renderRegistrationPage(cfg, c, "", "", "")
+	}
+}
+
+func DoRegister(cfg internal.ConfigService, userService internal.UserService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		name := c.FormValue("name")
+		email := c.FormValue("email")
+		password := c.FormValue("password")
+		passwordConfirmation := c.FormValue("password_confirmation")
+
+		_, err := userService.Register(c.Request().Context(), name, email, password, passwordConfirmation)
+		if err != nil {
+			log.Warn().Err(err).Msg("failed to register user")
+
+			return renderRegistrationPage(cfg, c, name, username, "Registration failed")
+		}
+
+		return c.Redirect(http.StatusSeeOther, "/login")
+	}
+}
+
+func renderRegistrationPage(cfg internal.ConfigService, c echo.Context, name string, username string, errorMessage string) error {
+	csrfToken := getCSRFToken(c)
+	if csrfToken == "" {
+		log.Error().Msg("csrf token not found")
+
+		//nolint:wrapcheck
+		return c.String(http.StatusInternalServerError, "server error")
+	}
+
+	page := view.Register(csrfToken, name, username, errorMessage)
+	document := view.Layout(cfg.Version(), "{{.Project}} | register", csrfToken, page)
+
+	return Render(http.StatusOK, document)
+}

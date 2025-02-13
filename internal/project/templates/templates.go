@@ -23,4 +23,16 @@ var (
 
 	//go:embed internal_route_api.go.tmpl
 	RouteAPIGo string
+
+	//go:embed internal_handler_common.go.tmpl
+	HandlerCommonGo string
+
+	//go:embed internal_handler_register.go.tmpl
+	HandlerRegisterGo string
+
+	//go:embed internal_handler_login.go.tmpl
+	HandlerLoginGo string
+
+	//go:embed internal_handler_home.go.tmpl
+	HandlerHomeGo string
 )

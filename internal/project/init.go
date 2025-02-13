@@ -64,7 +64,7 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 
 	// Create internal/config/service.go
 	if err := p.renderTemplateToFile(
-		"gomod",
+		"configservicego",
 		templates.ConfigServiceGo,
 		path,
 		filepath.Join("internal", "config"),
@@ -76,7 +76,7 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 
 	// Create internal/database/service.go
 	if err := p.renderTemplateToFile(
-		"gomod",
+		"databaseservicego",
 		templates.DatabaseServiceGo,
 		path,
 		filepath.Join("internal", "database"),
@@ -88,7 +88,7 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 
 	// Create internal/route/setup.go
 	if err := p.renderTemplateToFile(
-		"gomod",
+		"routesetupgo",
 		templates.RouteSetupGo,
 		path,
 		filepath.Join("internal", "route"),
@@ -98,9 +98,9 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
-	// Create internal/config/service.go
+	// Create internal//service.go
 	if err := p.renderTemplateToFile(
-		"gomod",
+		"routewebgo",
 		templates.RouteWebGo,
 		path,
 		filepath.Join("internal", "route"),
@@ -110,13 +110,61 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
-	// Create internal/config/service.go
+	// Create internal/route/api.go
 	if err := p.renderTemplateToFile(
-		"gomod",
+		"routeapigo",
 		templates.RouteAPIGo,
 		path,
 		filepath.Join("internal", "route"),
 		"api.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/handler/common.go
+	if err := p.renderTemplateToFile(
+		"handlercommongo",
+		templates.HandlerCommonGo,
+		path,
+		filepath.Join("internal", "handler"),
+		"common.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/handler/register.go
+	if err := p.renderTemplateToFile(
+		"handlerregistergo",
+		templates.HandlerRegisterGo,
+		path,
+		filepath.Join("internal", "handler"),
+		"register.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/handler/login.go
+	if err := p.renderTemplateToFile(
+		"handlerlogingo",
+		templates.HandlerLoginGo,
+		path,
+		filepath.Join("internal", "handler"),
+		"login.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/handler/home.go
+	if err := p.renderTemplateToFile(
+		"handlerhomego",
+		templates.HandlerHomeGo,
+		path,
+		filepath.Join("internal", "handler"),
+		"home.go",
 		values,
 	); err != nil {
 		return err

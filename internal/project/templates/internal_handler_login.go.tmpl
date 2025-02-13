@@ -1,0 +1,46 @@
+package handler
+
+import (
+	"log"
+	"net/http"
+
+	"{{.ProjectURL}}/internal/view"
+	"github.com/labstack/echo/v4"
+)
+
+func Login(cfg internal.ConfigService, _ internal.UserService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return renderLoginPage(cfg, c, "", "")
+	}
+}
+
+func DoLogin(cfg internal.ConfigService, userService internal.UserService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		email := c.FormValue("email")
+		password := c.FormValue("password")
+
+		user, err := userService.Login(c.Request().Context(), c, email, password)
+		if err != nil {
+			log.Warn().Err(err).Msg("failed to log user in")
+
+			return renderLoginPage(cfg, c, username, "Authentication failed")
+		}
+
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+}
+
+func renderLoginPage(cfg internal.ConfigService, c echo.Context, email string, errorMessage string) error {
+	csrfToken := getCSRFToken(c)
+	if csrfToken == "" {
+		log.Print("error: csrf token not found")
+
+		//nolint:wrapcheck
+		return c.String(http.StatusInternalServerError, "server error")
+	}
+
+	page := view.Login(cfg.DisableRegistration(), csrfToken, email, errorMessage)
+	document := view.Layout(cfg.Version(), "{{.Project}} | login", csrfToken, page)
+
+  return Render(http.StatusOK, document)
+}
