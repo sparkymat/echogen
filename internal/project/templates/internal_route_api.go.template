@@ -2,13 +2,13 @@ package route
 
 import (
 	"{{.ProjectURL}}/internal"
+	"{{.ProjectURL}}/internal/config"
 	"{{.ProjectURL}}/internal/auth"
-	"{{.ProjectURL}}/internal/handler/api"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func registerAPIRoutes(app *echo.Group, cfg internal.ConfigService, services internal.Services) {
+func registerAPIRoutes(app *echo.Group, cfg *config.Service, services internal.Services) {
 	apiGroup := app.Group("api")
 
 	if cfg.ReverseProxyAuthentication() {

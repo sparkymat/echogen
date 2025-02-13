@@ -218,6 +218,30 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
+	// Create internal/services.go
+	if err := p.renderTemplateToFile(
+		"servicesgo",
+		templates.ServicesGo,
+		path,
+		filepath.Join("internal"),
+		"services.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/user_service.go
+	if err := p.renderTemplateToFile(
+		"userservicego",
+		templates.UserServiceGo,
+		path,
+		filepath.Join("internal"),
+		"user_service.go",
+		values,
+	); err != nil {
+		return err
+	}
+
 	return nil
 }
 

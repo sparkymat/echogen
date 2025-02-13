@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"{{.ProjectURL}}/internal/view"
+	"{{.ProjectURL}}/internal/config"
 )
 
 const (
@@ -13,13 +14,13 @@ const (
 	defaultBcryptCost = 10
 )
 
-func Register(cfg internal.ConfigService, _ internal.UserService) echo.HandlerFunc {
+func Register(cfg *config.Service, _ internal.UserService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return renderRegistrationPage(cfg, c, "", "", "")
 	}
 }
 
-func DoRegister(cfg internal.ConfigService, userService internal.UserService) echo.HandlerFunc {
+func DoRegister(cfg *config.Service, userService internal.UserService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := c.FormValue("name")
 		email := c.FormValue("email")
@@ -37,7 +38,7 @@ func DoRegister(cfg internal.ConfigService, userService internal.UserService) ec
 	}
 }
 
-func renderRegistrationPage(cfg internal.ConfigService, c echo.Context, name string, username string, errorMessage string) error {
+func renderRegistrationPage(cfg *config.Service, c echo.Context, name string, username string, errorMessage string) error {
 	csrfToken := getCSRFToken(c)
 	if csrfToken == "" {
 		log.Error().Msg("csrf token not found")

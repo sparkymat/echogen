@@ -47,4 +47,10 @@ var (
 
 	//go:embed internal_view_home.templ.template
 	ViewHomeTempl string
+
+	//go:embed internal_services.go.template
+	ServicesGo string
+
+	//go:embed internal_user_service.go.template
+	UserServiceGo string
 )
