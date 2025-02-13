@@ -1,0 +1,16 @@
+package view
+
+templ Layout(title string, csrfToken string, content templ.Component) {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<meta name="csrf-token" content={ csrfToken }/>
+			<title>{ title }</title>
+		</head>
+		<body>
+			@content
+		</body>
+	</html>
+}

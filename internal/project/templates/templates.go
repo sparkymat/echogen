@@ -35,4 +35,16 @@ var (
 
 	//go:embed internal_handler_home.go.template
 	HandlerHomeGo string
+
+	//go:embed internal_view_layout.templ.template
+	ViewLayoutTempl string
+
+	//go:embed internal_view_register.templ.template
+	ViewRegisterTempl string
+
+	//go:embed internal_view_login.templ.template
+	ViewLoginTempl string
+
+	//go:embed internal_view_home.templ.template
+	ViewHomeTempl string
 )

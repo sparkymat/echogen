@@ -170,6 +170,54 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
+	// Create internal/view/layout.templ
+	if err := p.renderTemplateToFile(
+		"viewlayouttempl",
+		templates.ViewLayoutTempl,
+		path,
+		filepath.Join("internal", "view"),
+		"layout.templ",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/view/register.templ
+	if err := p.renderTemplateToFile(
+		"viewregistertempl",
+		templates.ViewRegisterTempl,
+		path,
+		filepath.Join("internal", "view"),
+		"register.templ",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/view/login.templ
+	if err := p.renderTemplateToFile(
+		"viewlogintempl",
+		templates.ViewLoginTempl,
+		path,
+		filepath.Join("internal", "view"),
+		"login.templ",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/view/home.templ
+	if err := p.renderTemplateToFile(
+		"viewhometempl",
+		templates.ViewHomeTempl,
+		path,
+		filepath.Join("internal", "view"),
+		"home.templ",
+		values,
+	); err != nil {
+		return err
+	}
+
 	return nil
 }
 
