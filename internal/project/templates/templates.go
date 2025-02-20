@@ -71,4 +71,10 @@ var (
 
 	//go:embed internal_database_queries.sql.template
 	DatabaseQueriesSQL string
+
+	//go:embed internal_auth_middleware.go.template
+	AuthMiddlewareGo string
+
+	//go:embed internal_auth_session.go.template
+	AuthSessionGo string
 )

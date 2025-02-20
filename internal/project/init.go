@@ -316,6 +316,42 @@ func (p *Project) Init(ctx context.Context, path string, forceCreate bool) error
 		return err
 	}
 
+	// Create internal/auth/session.go
+	if err := p.renderTemplateToFile(
+		"authsessiongo",
+		templates.AuthSessionGo,
+		path,
+		filepath.Join("internal", "auth"),
+		"session.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/auth/middleware.go
+	if err := p.renderTemplateToFile(
+		"authmiddlewarego",
+		templates.AuthMiddlewareGo,
+		path,
+		filepath.Join("internal", "auth"),
+		"middleware.go",
+		values,
+	); err != nil {
+		return err
+	}
+
+	// Create internal/auth/session.go
+	if err := p.renderTemplateToFile(
+		"authsessiongo",
+		templates.AuthSessionGo,
+		path,
+		filepath.Join("internal", "auth"),
+		"session.go",
+		values,
+	); err != nil {
+		return err
+	}
+
 	return nil
 }
 
