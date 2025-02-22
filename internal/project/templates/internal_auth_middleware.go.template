@@ -19,9 +19,12 @@ const ClientNameKey = "client_name"
 
 type ConfigService interface {
   JWTSecret() string
+  ProxyAuthNameHeader() string
+  ProxyAuthEmailHeader() string
 }
 
 type UserService interface {
+  CreateUser(ctx context.Context, name string, email string, encryptedPassword string) (dbx.User, error)
   FetchUserByEmail(ctx context.Context, email string) (dbx.User, error)
 }
 

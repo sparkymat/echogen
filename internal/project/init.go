@@ -28,9 +28,10 @@ var projectTemplate = map[string]any{
 		"services.go":     templates.ServicesGo,
 		"user_service.go": templates.UserServiceGo,
 		"auth": map[string]any{
-			"jwt.go":        templates.AuthJWTGo,
-			"middleware.go": templates.AuthMiddlewareGo,
-			"session.go":    templates.AuthSessionGo,
+			"jwt.go":                   templates.AuthJWTGo,
+			"middleware.go":            templates.AuthMiddlewareGo,
+			"proxy_auth_middleware.go": templates.AuthProxyAuthMiddlewareGo,
+			"session.go":               templates.AuthSessionGo,
 		},
 		"config": map[string]any{
 			"service.go": templates.ConfigServiceGo,

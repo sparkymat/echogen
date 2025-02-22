@@ -81,6 +81,9 @@ var (
 	//go:embed internal_auth_jwt.go.template
 	AuthJWTGo string
 
+	//go:embed internal_auth_proxy_auth_middleware.go.template
+	AuthProxyAuthMiddlewareGo string
+
 	//go:embed env_example.template
 	EnvExample string
 

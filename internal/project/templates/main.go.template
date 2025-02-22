@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"{{.ProjectURL}}/internal"
 	"{{.ProjectURL}}/internal/config"
 	"{{.ProjectURL}}/internal/database"
 	"{{.ProjectURL}}/internal/route"
@@ -31,6 +32,8 @@ func main() {
 		log.Error().Msg(err.Error())
 		panic(err)
 	}
+
+	db := dbx.New(dbDriver.DB())
 
 	e := echo.New()
 

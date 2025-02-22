@@ -37,7 +37,7 @@ type envValues struct {
 	DatabaseSSLMode            bool   `env:"DATABASE_SSL_MODE"             envDefault:"true"`
 	DisableRegistration        bool   `env:"DISABLE_REGISTRATION"          envDefault:"false"`
 	ReverseProxyAuthentication bool   `env:"REVERSE_PROXY_AUTHENTICATION"  envDefault:"false"`
-	ProxyAuthUsernameHeader    string `env:"PROXY_AUTH_USERNAME_HEADER"    envDefault:"Remote-User"`
+	ProxyAuthEmailHeader       string `env:"PROXY_AUTH_EMAIL_HEADER"       envDefault:"Remote-User"`
 	ProxyAuthNameHeader        string `env:"PROXY_AUTH_NAME_HEADER"        envDefault:"Remote-Name"`
 	RedisURL                   string `env:"REDIS_URL,required"`
 	StorageFolder              string `env:"STORAGE_FOLDER,required"`
@@ -102,8 +102,8 @@ func (s *Service) ReverseProxyAuthentication() bool {
 	return s.envValues.ReverseProxyAuthentication
 }
 
-func (s *Service) ProxyAuthUsernameHeader() string {
-	return s.envValues.ProxyAuthUsernameHeader
+func (s *Service) ProxyAuthEmailHeader() string {
+	return s.envValues.ProxyAuthEmailHeader
 }
 
 func (s *Service) ProxyAuthNameHeader() string {
