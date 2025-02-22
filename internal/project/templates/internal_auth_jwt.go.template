@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+  "github.com/google/uuid"
 )
 
 type Claims struct {
@@ -12,10 +13,13 @@ type Claims struct {
 	Email string `json:"email"`
 }
 
-const TokenExpiryLengthHours = 8
+const (
+	TokenExpiryLengthHours = 8
+	Issuer                 = "{{.Project}}"
+)
 
-func ValidateJWTString(jwtSecret string, tokenString string) (*string, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(*jwt.Token) (interface{}, error) {
+func ParseJWTString(jwtSecret string, tokenString string) (*string, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(_ *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil
 	})
 	if err != nil {
@@ -27,15 +31,15 @@ func ValidateJWTString(jwtSecret string, tokenString string) (*string, error) {
 		return nil, fmt.Errorf("unable to obtain claims. err: %w", err)
 	}
 
-	return &claims.Email, nil
+	return &claims.Subject, nil
 }
 
-func GenerateJWTString(jwtSecret string, email string) (string, error) {
+func GenerateJWTString(jwtSecret string, userID uuid.UUID) (string, error) {
 	claims := Claims{
-		Email: email,
 		StandardClaims: jwt.StandardClaims{
+			Subject:   userID.String(),
 			ExpiresAt: time.Now().Add(time.Hour * TokenExpiryLengthHours).Unix(),
-			Issuer:    "{{.Project}}",
+			Issuer:    Issuer,
 		},
 	}
 

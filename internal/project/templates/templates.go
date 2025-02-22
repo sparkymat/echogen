@@ -89,4 +89,7 @@ var (
 
 	//go:embed gitignore.template
 	Gitignore string
+
+	//go:embed internal_service_user_service.go.template
+	ServiceUserServiceGo string
 )

@@ -21,8 +21,7 @@ func DoLogin(cfg *config.Service, userService internal.UserService) echo.Handler
 		email := c.FormValue("email")
 		password := c.FormValue("password")
 
-		_, err := userService.Login(c.Request().Context(), c, email, password)
-		if err != nil {
+		if err := userService.Login(c, email, password); err != nil {
 			log.Warn().Err(err).Msg("failed to log user in")
 
 			return renderLoginPage(cfg, c, email, "Authentication failed")

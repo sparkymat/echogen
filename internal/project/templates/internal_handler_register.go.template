@@ -28,7 +28,7 @@ func DoRegister(cfg *config.Service, userService internal.UserService) echo.Hand
 		password := c.FormValue("password")
 		passwordConfirmation := c.FormValue("password_confirmation")
 
-		_, err := userService.Register(c.Request().Context(), name, email, password, passwordConfirmation)
+		_, err := userService.Register(c, name, email, password, passwordConfirmation)
 		if err != nil {
 			log.Warn().Err(err).Msg("failed to register user")
 

@@ -1,0 +1,117 @@
+package user
+
+import (
+	"context"
+	"fmt"
+  "errors"
+
+	"github.com/labstack/echo/v4"
+	"{{.ProjectURL}}/internal/dbx"
+	"{{.ProjectURL}}/internal/auth"
+	"{{.ProjectURL}}/internal/config"
+	"golang.org/x/crypto/bcrypt"
+  "github.com/google/uuid"
+)
+
+const (
+	minPasswordLength = 8
+	defaultBcryptCost = 10
+)
+
+var (
+ 	ErrPasswordsDontMatch    = errors.New("password does not match")
+	ErrPasswordTooShort      = errors.New("password too short")
+	ErrUserAlreadyRegistered = errors.New("user already registered")
+)
+
+func New(cfg *config.Service, db *dbx.Queries) *Service {
+	return &Service{
+    cfg: cfg,
+		db: db,
+	}
+}
+
+type Service struct {
+	cfg *config.Service
+	db *dbx.Queries
+}
+
+func (s *Service) CreateUser(ctx context.Context, name string, email string, encryptedPassword string) (dbx.User, error) {
+	user, err := s.db.CreateUser(ctx, dbx.CreateUserParams{
+		Name:              name,
+		Email:             email,
+		EncryptedPassword: encryptedPassword,
+	})
+	if err != nil {
+		return dbx.User{}, fmt.Errorf("unable to fetch user. err: %w", err)
+	}
+
+	return user, nil
+}
+
+func (s *Service) FetchUserByEmail(ctx context.Context, email string) (dbx.User, error) {
+	user, err := s.db.FetchUserByEmail(ctx, email)
+	if err != nil {
+		return user, fmt.Errorf("unable to fetch user. err: %w", err)
+	}
+
+	return user, nil
+}
+
+func (s *Service) FetchUserByID(ctx context.Context, userID uuid.UUID) (dbx.User, error) {
+	user, err := s.db.FetchUserByID(ctx, userID)
+	if err != nil {
+		return user, fmt.Errorf("unable to fetch user: %w", err)
+	}
+
+	return user, nil
+}
+
+func (s *Service) Login(c echo.Context, email string, password string) error {
+	user, err := s.db.FetchUserByEmail(c.Request().Context(), email)
+	if err != nil {
+		return fmt.Errorf("failed to load user: %w", err)
+	}
+
+	if bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password)) != nil {
+		return ErrPasswordsDontMatch
+	}
+
+	err = auth.SaveUserIDToSession(s.cfg.JWTSecret(), c, user.ID)
+	if err != nil {
+		return fmt.Errorf("failed to save email to session: %w", err)
+	}
+
+	return nil
+}
+
+func (s *Service) Register(c echo.Context, name string, email string, password string, passwordConfirmation string) (dbx.User, error) {
+	if password != passwordConfirmation {
+		return dbx.User{}, ErrPasswordsDontMatch
+	}
+
+	if len(password) < minPasswordLength {
+		return dbx.User{}, ErrPasswordTooShort
+	}
+
+	_, err := s.db.FetchUserByEmail(c.Request().Context(), email)
+	if err == nil {
+		return dbx.User{}, ErrUserAlreadyRegistered
+	}
+
+	encryptedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(password), defaultBcryptCost)
+	if err != nil {
+		return dbx.User{}, fmt.Errorf("failed to encrypt password: %w", err)
+	}
+
+	user, err := s.db.CreateUser(c.Request().Context(), dbx.CreateUserParams{
+		Name:              name,
+		Email:             email,
+		EncryptedPassword: string(encryptedPasswordBytes),
+	})
+	if err != nil {
+		return dbx.User{}, fmt.Errorf("failed to create new user: %w", err)
+	}
+
+	return user, nil
+}

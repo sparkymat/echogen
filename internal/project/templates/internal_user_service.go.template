@@ -5,11 +5,13 @@ import (
 
 	"{{.ProjectURL}}/internal/dbx"
 	"github.com/labstack/echo/v4"
+  "github.com/google/uuid"
 )
 
 type UserService interface {
   CreateUser(ctx context.Context, name string, email string, encryptedPassword string) (dbx.User, error)
   FetchUserByEmail(ctx context.Context, email string) (dbx.User, error)
-	Login(ctx context.Context, c echo.Context, email string, password string) (dbx.User, error)
-	Register(ctx context.Context, name string, email string, password string, passwordConfirmation string) (dbx.User, error)
+  FetchUserByID(ctx context.Context, id uuid.UUID) (dbx.User, error)
+	Login(c echo.Context, email string, password string) error
+	Register(c echo.Context, name string, email string, password string, passwordConfirmation string) (dbx.User, error)
 }

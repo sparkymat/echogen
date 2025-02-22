@@ -5,10 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"html/template"
 	"os"
 	"path/filepath"
 	"reflect"
+	"text/template"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -50,6 +50,11 @@ var projectTemplate = map[string]any{
 			"api.go":   templates.RouteAPIGo,
 			"setup.go": templates.RouteSetupGo,
 			"web.go":   templates.RouteWebGo,
+		},
+		"service": map[string]any{
+			"user": map[string]any{
+				"service.go": templates.ServiceUserServiceGo,
+			},
 		},
 		"view": map[string]any{
 			"layout.templ":   templates.ViewLayoutTempl,
