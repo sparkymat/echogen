@@ -6,9 +6,10 @@ import (
 	"{{.ProjectURL}}/internal/handler"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+  "{{.ProjectURL}}/internal/config"
 )
 
-func registerWebRoutes(app *echo.Group, cfg internal.ConfigService, s internal.Services) {
+func registerWebRoutes(app *echo.Group, cfg *config.Service, s internal.Services) {
 	webApp := app.Group("")
 
 	webApp.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{

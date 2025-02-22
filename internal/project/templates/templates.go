@@ -77,4 +77,13 @@ var (
 
 	//go:embed internal_auth_session.go.template
 	AuthSessionGo string
+
+	//go:embed internal_auth_jwt.go.template
+	AuthJWTGo string
+
+	//go:embed env_example.template
+	EnvExample string
+
+	//go:embed gitignore.template
+	Gitignore string
 )

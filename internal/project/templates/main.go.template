@@ -38,7 +38,13 @@ func main() {
 
 	e.Logger = lecho.From(log.Output(zl))
 
-	route.Setup(e, cfg)
+	userService := user.New(db)
+
+  s := internal.Services{
+		User:      userService,
+  }
+
+	route.Setup(e, cfg, s)
 
 	e.Logger.Panic(e.Start(":8080"))
 }

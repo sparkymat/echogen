@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"{{.ProjectURL}}/internal/dbx"
+	"github.com/labstack/echo/v4"
 )
 
 type UserService interface {

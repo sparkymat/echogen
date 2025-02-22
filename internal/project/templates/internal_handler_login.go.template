@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/rs/zerolog/log"
 	"{{.ProjectURL}}/internal"
 	"{{.ProjectURL}}/internal/view"
 	"{{.ProjectURL}}/internal/config"
@@ -21,11 +21,11 @@ func DoLogin(cfg *config.Service, userService internal.UserService) echo.Handler
 		email := c.FormValue("email")
 		password := c.FormValue("password")
 
-		user, err := userService.Login(c.Request().Context(), c, email, password)
+		_, err := userService.Login(c.Request().Context(), c, email, password)
 		if err != nil {
 			log.Warn().Err(err).Msg("failed to log user in")
 
-			return renderLoginPage(cfg, c, username, "Authentication failed")
+			return renderLoginPage(cfg, c, email, "Authentication failed")
 		}
 
 		return c.Redirect(http.StatusSeeOther, "/")
@@ -44,5 +44,5 @@ func renderLoginPage(cfg *config.Service, c echo.Context, email string, errorMes
 	page := view.Login(cfg.DisableRegistration(), csrfToken, email, errorMessage)
 	document := view.Layout(cfg.Version(), "{{.Project}} | login", csrfToken, page)
 
-  return Render(http.StatusOK, document)
+  return Render(c, http.StatusOK, document)
 }

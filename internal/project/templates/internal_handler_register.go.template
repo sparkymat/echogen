@@ -32,14 +32,14 @@ func DoRegister(cfg *config.Service, userService internal.UserService) echo.Hand
 		if err != nil {
 			log.Warn().Err(err).Msg("failed to register user")
 
-			return renderRegistrationPage(cfg, c, name, username, "Registration failed")
+			return renderRegistrationPage(cfg, c, name, email, "Registration failed")
 		}
 
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
 }
 
-func renderRegistrationPage(cfg *config.Service, c echo.Context, name string, username string, errorMessage string) error {
+func renderRegistrationPage(cfg *config.Service, c echo.Context, name string, email string, errorMessage string) error {
 	csrfToken := getCSRFToken(c)
 	if csrfToken == "" {
 		log.Error().Msg("csrf token not found")
@@ -48,8 +48,8 @@ func renderRegistrationPage(cfg *config.Service, c echo.Context, name string, us
 		return c.String(http.StatusInternalServerError, "server error")
 	}
 
-	page := view.Register(csrfToken, name, username, errorMessage)
+	page := view.Register(csrfToken, name, email, errorMessage)
 	document := view.Layout(cfg.Version(), "{{.Project}} | register", csrfToken, page)
 
-	return Render(http.StatusOK, document)
+	return Render(c, http.StatusOK, document)
 }
