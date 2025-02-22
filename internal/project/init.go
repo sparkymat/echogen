@@ -18,12 +18,13 @@ import (
 var ErrDirectoryNotEmpty = errors.New("directory is not empty")
 
 var projectTemplate = map[string]any{
-	".gitignore":   templates.Gitignore,
-	".env.example": templates.EnvExample,
-	"Makefile":     templates.Makefile,
-	"main.go":      templates.MainGo,
-	"go.mod":       templates.GoMod,
-	"sqlc.yaml":    templates.SqlcYaml,
+	".echogen.json": templates.EchogenJson,
+	".gitignore":    templates.Gitignore,
+	".env.example":  templates.EnvExample,
+	"Makefile":      templates.Makefile,
+	"main.go":       templates.MainGo,
+	"go.mod":        templates.GoMod,
+	"sqlc.yaml":     templates.SqlcYaml,
 	"internal": map[string]any{
 		"services.go":     templates.ServicesGo,
 		"user_service.go": templates.UserServiceGo,

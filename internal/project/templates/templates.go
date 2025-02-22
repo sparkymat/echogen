@@ -92,4 +92,7 @@ var (
 
 	//go:embed internal_service_user_service.go.template
 	ServiceUserServiceGo string
+
+	//go:embed echogen.json.template
+	EchogenJson string
 )
